@@ -1,8 +1,15 @@
 import request from 'supertest';
 import { expect } from 'chai';
 import app from '../src/app.js';
+import mongoose from 'mongoose';
+
 
 describe('POST /api/auth/login', () => {
+  after(async () => {
+    await mongoose.connection.close();
+  });
+
+//describe('POST /api/auth/login', () => {
   it('deve retornar 200 e um token quando o admin informar e-mail e senha corretos', async () => {
     const resposta = await request(app)
       .post('/api/auth/login')
@@ -20,4 +27,13 @@ describe('POST /api/auth/login', () => {
     expect(resposta.status).to.equal(401);
     expect(resposta.body.error).to.equal('E-mail ou senha inválidos.');
   });
+
+  it('deve retornar 400 quando a senha não for informada', async () => {
+    const resposta = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@escola.com', senha: '' });
+
+    expect(resposta.status).to.equal(400);
+    
+    });
 });

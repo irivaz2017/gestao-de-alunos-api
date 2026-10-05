@@ -4,13 +4,14 @@ import { expect } from 'chai';
 
 
 describe('***Login***', () => {
-    it.only('*Deve retornar 200 quando usuario e senha forem corretos*', async () => {
+    it('*Deve retornar 200 quando usuario e senha forem corretos*', async () => {
         const loginResposta = await request('http://localhost:3000')
             .post('/api/auth/login')
             .set('Content-Type', 'application/json')
             .send({'email': 'admin@escola.com', 'senha': 'admin123'});
         
             expect(loginResposta.status).to.equal(200);
+            expect(loginResposta.body).to.have.property('token');
 
     });
 
@@ -36,6 +37,7 @@ describe('***Login***', () => {
             .send({'email': 'admin@escola.com', 'senha': 'admin1234'});
         
             expect(loginResposta.status).to.equal(401);
+            expect(loginResposta.body.error).to.equal('E-mail ou senha inválidos.');
 
     });
 
